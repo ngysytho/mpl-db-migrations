@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: user-profile-indexes-002
+      author: mpl-team
+      comment: Uniqueness and stable pagination indexes
+      changes:
+        - sql:
+            sql: |
+              CREATE UNIQUE INDEX ux_users_email ON users(email);
+              CREATE UNIQUE INDEX ux_users_keycloak_id ON users(keycloak_user_id);
+              CREATE INDEX ix_users_created_id ON users(created_at, id);
+              CREATE INDEX ix_users_name_id ON users(full_name, id);
+              CREATE INDEX ix_users_status_created ON users(status, created_at, id);
+      rollback:
+        - sql:
+            sql: |
+              DROP INDEX ix_users_status_created;
+              DROP INDEX ix_users_name_id;
+              DROP INDEX ix_users_created_id;
+              DROP INDEX ux_users_keycloak_id;
+              DROP INDEX ux_users_email;

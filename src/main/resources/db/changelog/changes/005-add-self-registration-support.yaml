@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: user-self-registration-support-005
+      author: mpl-team
+      comment: Separate public and administrator idempotency namespaces and persist registration quotas
+      changes:
+        - sql:
+            sql: |
+              ALTER TABLE user_provisioning_requests ADD COLUMN request_kind VARCHAR(24) NOT NULL DEFAULT 'ADMIN';
+              ALTER TABLE user_provisioning_requests ADD CONSTRAINT ck_provisioning_kind CHECK (request_kind IN ('ADMIN', 'SELF_REGISTRATION'));
+              CREATE TABLE user_registration_rate_limits (
+                client_hash VARCHAR(64) NOT NULL,
+                window_start TIMESTAMP WITH TIME ZONE NOT NULL,
+                attempts INTEGER NOT NULL CHECK (attempts > 0),
+                PRIMARY KEY (client_hash, window_start)
+              );
+              CREATE INDEX ix_registration_rate_window ON user_registration_rate_limits(window_start);
+      rollback:
+        - sql:
+            sql: |
+              DROP TABLE user_registration_rate_limits;
+              ALTER TABLE user_provisioning_requests DROP COLUMN request_kind;

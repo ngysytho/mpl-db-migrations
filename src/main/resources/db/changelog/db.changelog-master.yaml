@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - preConditions:
+      - onFail: HALT
+      - dbms:
+          type: postgresql
+      - sqlCheck:
+          expectedResult: user_service_db
+          sql: SELECT current_database()
+  - include:
+      file: changes/001-create-users-table.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/002-create-user-indexes.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/003-add-user-constraints.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/004-create-provisioning-and-sync-journal.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/005-add-self-registration-support.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: seed/001-development-seed.yaml
+      relativeToChangelogFile: true

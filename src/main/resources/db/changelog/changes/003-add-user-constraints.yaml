@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: user-profile-invariants-003
+      author: mpl-team
+      comment: Enforce normalized email, nonblank names, valid status and chronological timestamps
+      changes:
+        - sql:
+            sql: |
+              ALTER TABLE users ADD CONSTRAINT ck_users_email_normalized CHECK (email = lower(btrim(email)) AND email <> '');
+              ALTER TABLE users ADD CONSTRAINT ck_users_name_nonblank CHECK (length(btrim(full_name)) > 0);
+              ALTER TABLE users ADD CONSTRAINT ck_users_status CHECK (status IN ('ACTIVE','INACTIVE','SUSPENDED'));
+              ALTER TABLE users ADD CONSTRAINT ck_users_timestamps CHECK (updated_at >= created_at);
+      rollback:
+        - sql:
+            sql: |
+              ALTER TABLE users DROP CONSTRAINT ck_users_timestamps;
+              ALTER TABLE users DROP CONSTRAINT ck_users_status;
+              ALTER TABLE users DROP CONSTRAINT ck_users_name_nonblank;
+              ALTER TABLE users DROP CONSTRAINT ck_users_email_normalized;

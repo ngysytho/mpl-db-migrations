@@ -1,0 +1,33 @@
+databaseChangeLog:
+  - changeSet:
+      id: user-create-profile-table-001
+      author: mpl-team
+      comment: Application-owned profiles; credentials never enter this database
+      preConditions:
+        - onFail: HALT
+        - dbms:
+            type: postgresql
+        - sqlCheck:
+            expectedResult: user_service_db
+            sql: SELECT current_database()
+        - not:
+            tableExists:
+              tableName: users
+      changes:
+        - sql:
+            sql: |
+              CREATE TABLE users (
+                id UUID PRIMARY KEY,
+                keycloak_user_id VARCHAR(255) NOT NULL,
+                full_name VARCHAR(200) NOT NULL,
+                email VARCHAR(254) NOT NULL,
+                phone_number VARCHAR(30),
+                avatar_url VARCHAR(2048),
+                status VARCHAR(20) NOT NULL,
+                created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+                updated_at TIMESTAMP WITH TIME ZONE NOT NULL,
+                version BIGINT NOT NULL DEFAULT 0
+              );
+      rollback:
+        - sql:
+            sql: DROP TABLE users;

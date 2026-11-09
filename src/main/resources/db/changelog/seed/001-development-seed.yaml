@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: user-development-profile-seed-001
+      author: mpl-team
+      contextFilter: "@development-seed"
+      comment: Opt-in profile for a real pre-created disabled Keycloak identity; never creates an identity
+      preConditions:
+        - onFail: HALT
+        - sqlCheck:
+            expectedResult: "1"
+            sql: "SELECT CASE WHEN '${developmentSeedKeycloakUserId}' ~ '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$' THEN 1 ELSE 0 END"
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column: {name: id, value: a96e4262-0694-4cf6-b480-05f4aff87355}
+              - column: {name: keycloak_user_id, value: "${developmentSeedKeycloakUserId}"}
+              - column: {name: full_name, value: Development User}
+              - column: {name: email, value: developer@example.test}
+              - column: {name: status, value: INACTIVE}
+              - column: {name: created_at, valueComputed: CURRENT_TIMESTAMP}
+              - column: {name: updated_at, valueComputed: CURRENT_TIMESTAMP}
+              - column: {name: version, valueNumeric: 0}
+      rollback:
+        - delete:
+            tableName: users
+            where: "id = 'a96e4262-0694-4cf6-b480-05f4aff87355' AND email = 'developer@example.test'"

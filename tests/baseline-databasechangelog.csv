@@ -1,0 +1,6 @@
+id,author,filename,md5sum,orderexecuted,exectype
+user-create-profile-table-001,mpl-team,db/changelog/changes/001-create-users-table.yaml,9:ebdaba9c023e551921faaad10fc35700,1,EXECUTED
+user-profile-indexes-002,mpl-team,db/changelog/changes/002-create-user-indexes.yaml,9:75c2fd6f4c01ff9ee5173be424731c4a,2,EXECUTED
+user-profile-invariants-003,mpl-team,db/changelog/changes/003-add-user-constraints.yaml,9:78dad37d78f82948bc1ca078dd4dd392,3,EXECUTED
+user-provisioning-sync-journal-004,mpl-team,db/changelog/changes/004-create-provisioning-and-sync-journal.yaml,9:cb4b8b32d4a36ab031eac4ce40d3a1a9,4,EXECUTED
+user-self-registration-support-005,mpl-team,db/changelog/changes/005-add-self-registration-support.yaml,9:230f377c94f19664cd2ddcd61bf0391e,5,EXECUTED
